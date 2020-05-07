@@ -40,6 +40,13 @@ namespace Topdev.Bittrex
 
         public Task<Ticker> GetMarketTickerAsync(string marketSymbol) => GetResponseAsync<Ticker>($"{_baseApiUrl}/markets/{marketSymbol}/ticker");
 
+        public async Task<long> PingAsync() 
+        {
+            var pong = await GetResponseAsync<Pong>($"{_baseApiUrl}/ping");
+            
+            return pong.ServerTime;
+        }
+
         private async Task<T> GetResponseAsync<T>(string url)
         {
             var result = await _httpClient.GetAsync(url);

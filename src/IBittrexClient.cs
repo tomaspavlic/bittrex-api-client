@@ -80,5 +80,11 @@ namespace Topdev.Bittrex
         /// <param name="marketSymbol">symbol of market to retrieve ticker for</param>
         /// <returns></returns>
         Task<Ticker> GetMarketTickerAsync(string marketSymbol);
+
+        /// <summary>
+        /// Pings the service.
+        /// </summary>
+        /// <returns></returns>
+        Task<long> PingAsync();
     }
 }
