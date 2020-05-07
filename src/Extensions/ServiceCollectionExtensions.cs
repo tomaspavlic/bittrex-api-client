@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Topdev.Bittrex.Client.Extensions
+namespace Topdev.Bittrex.Client
 {
     public static class ServiceCollectionExtensions
     {

@@ -1,8 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
-using Topdev.Bittrex.Client.Converters;
 
-namespace Topdev.Bittrex.Client.Models
+namespace Topdev.Bittrex
 {
     public class Candle
     {

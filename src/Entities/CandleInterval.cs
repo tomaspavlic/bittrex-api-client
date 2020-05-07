@@ -1,4 +1,4 @@
-namespace Topdev.Bittrex.Client.Models
+namespace Topdev.Bittrex
 {
     public enum CandleInterval
     {
