@@ -23,12 +23,18 @@ jobs:
       run: dotnet build --configuration Release --no-restore
     - name: Test
       run: dotnet test --no-restore --verbosity normal
+      
   deploy:
+
     needs: build
+
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
       - name: Pack nuget package
         run: dotnet pack --configuration Release
       - name: Push package to nuget
-        run: dotnet nuget push **/*.nupkg -- ${{ secrets.NUGET_PUBLISH_KEY }} --source https://api.nuget.org/v3/index.json
+        run: dotnet nuget push **/*.nupkg --api-key ${{ secrets.NUGET_PUBLISH_KEY }} --source https://api.nuget.org/v3/index.json
