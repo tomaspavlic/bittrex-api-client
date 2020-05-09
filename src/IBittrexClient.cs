@@ -86,5 +86,14 @@ namespace Topdev.Bittrex
         /// </summary>
         /// <returns></returns>
         Task<long> PingAsync();
+
+        /// <summary>
+        /// Retrieve information for the account associated with the request. 
+        /// For now, it only echoes the subaccount if one was specified in the header, 
+        /// which can be used to verify that one is operating on the intended account. 
+        /// More fields will be added later.
+        /// </summary>
+        /// <returns></returns>
+        Task<Account> GetAccountAsync();
     }
 }
