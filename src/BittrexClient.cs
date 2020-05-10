@@ -141,7 +141,7 @@ namespace Topdev.Bittrex
 
             while (response.Length > 0)
             {
-                T lastElement = response[^0];
+                T lastElement = response[^1];
                 var nextPageToken = nextPageTokenProperty.GetValue(lastElement);
 
                 var url = $"{path}?nextPageToken={nextPageToken}";
@@ -180,15 +180,21 @@ namespace Topdev.Bittrex
             throw new NotImplementedException();
         }
 
-        public Task<ConditionalOrder[]> GetConditionalOrdersAsync(ConditionalOrderState state)
+        public Task<ConditionalOrder[]> GetConditionalOrdersAsync(OrderState state)
         {
-            var stateName = Enum.GetName(typeof(ConditionalOrderState), state).ToLower();
+            var stateName = Enum.GetName(typeof(OrderState), state).ToLower();
             return GetPagedResponseAsync<ConditionalOrder>($"conditional-orders/{stateName}", HttpMethod.Get, true);
         }
 
         public Task<ConditionalOrder> CreateConditionalOrderAsync(ConditionalOrder order)
         {
             throw new NotImplementedException();
+        }
+
+        public Task<Order[]> GetOrdersAsync(OrderState state)
+        {
+            var stateName = Enum.GetName(typeof(OrderState), state).ToLower();
+            return GetPagedResponseAsync<Order>($"orders/{stateName}", HttpMethod.Get, true);
         }
     }
 }

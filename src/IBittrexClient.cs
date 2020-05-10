@@ -167,7 +167,7 @@ namespace Topdev.Bittrex
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
-        Task<ConditionalOrder[]> GetConditionalOrdersAsync(ConditionalOrderState state);
+        Task<ConditionalOrder[]> GetConditionalOrdersAsync(OrderState state);
 
         /// <summary>
         /// Create a new conditional order.
@@ -175,5 +175,8 @@ namespace Topdev.Bittrex
         /// <param name="order"></param>
         /// <returns></returns>
         Task<ConditionalOrder> CreateConditionalOrderAsync(ConditionalOrder order);
+
+
+        Task<Order[]> GetOrdersAsync(OrderState state);
     }
 }

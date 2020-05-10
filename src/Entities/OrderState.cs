@@ -1,6 +1,6 @@
 namespace Topdev.Bittrex
 {
-    public enum ConditionalOrderState
+    public enum OrderState
     {
         Closed,
         Open
