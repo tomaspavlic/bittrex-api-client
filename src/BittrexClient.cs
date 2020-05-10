@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -130,6 +132,26 @@ namespace Topdev.Bittrex
             }
         }
 
+        private async Task<T[]> GetPagedResponseAsync<T>(string path, HttpMethod method, bool authentication = false, object content = null)
+        {
+            var list = new List<T>();
+            var response = await GetResponseAsync<T[]>(path, method, authentication, content);
+            var nextPageTokenProperty = typeof(T).GetProperties().FirstOrDefault(x => x.GetCustomAttributes(true).Any(c => c is PageTokenAttribute));
+            list.AddRange(response);
+
+            while (response.Length > 0)
+            {
+                T lastElement = response[^0];
+                var nextPageToken = nextPageTokenProperty.GetValue(lastElement);
+
+                var url = $"{path}?nextPageToken={nextPageToken}";
+                response = await GetResponseAsync<T[]>(url, method, authentication, content);
+                list.AddRange(response);
+            }
+
+            return list.ToArray();
+        }
+
         private Task<T> GetResponseAsync<T>(string path, HttpMethod method, bool authentication = false, object content = null)
         {
             var url = $"{_baseApiUrl}/{path}";
@@ -148,6 +170,25 @@ namespace Topdev.Bittrex
             _httpClient.Dispose();
         }
 
-        
+        public Task<ConditionalOrder> GetConditionalOrderAsync(string orderId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task DeleteConditionalOrderAsync(string orderId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ConditionalOrder[]> GetConditionalOrdersAsync(ConditionalOrderState state)
+        {
+            var stateName = Enum.GetName(typeof(ConditionalOrderState), state).ToLower();
+            return GetPagedResponseAsync<ConditionalOrder>($"conditional-orders/{stateName}", HttpMethod.Get, true);
+        }
+
+        public Task<ConditionalOrder> CreateConditionalOrderAsync(ConditionalOrder order)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

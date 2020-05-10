@@ -147,5 +147,33 @@ namespace Topdev.Bittrex
         /// <param name="symbol"></param>
         /// <returns></returns>
         Task<Currency> GetCurrencyAsync(string symbol);
+
+        /// <summary>
+        /// Retrieve information on a specific conditional order.
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        Task<ConditionalOrder> GetConditionalOrderAsync(string orderId);
+
+        /// <summary>
+        /// Cancel a conditional order.
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        Task DeleteConditionalOrderAsync(string orderId);
+
+        /// <summary>
+        /// List closed conditional orders.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        Task<ConditionalOrder[]> GetConditionalOrdersAsync(ConditionalOrderState state);
+
+        /// <summary>
+        /// Create a new conditional order.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        Task<ConditionalOrder> CreateConditionalOrderAsync(ConditionalOrder order);
     }
 }
