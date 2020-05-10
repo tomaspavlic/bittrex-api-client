@@ -68,6 +68,16 @@ namespace Topdev.Bittrex
             return GetResponseAsync<Account>($"{_baseApiUrl}/account", HttpMethod.Get, true);
         }
 
+        public Task<Volume> GetAccountVolumeAsync()
+        {
+            return GetResponseAsync<Volume>($"{_baseApiUrl}/account/volume", HttpMethod.Get, true);
+        }
+
+        public Task<Address[]> GetAddressesAsync()
+        {
+            return GetResponseAsync<Address[]>($"{_baseApiUrl}/addresses", HttpMethod.Get, true);
+        }
+
         private async Task<T> GetResponseAsync<T>(HttpRequestMessage message)
         {
             var result = await _httpClient.SendAsync(message);

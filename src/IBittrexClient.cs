@@ -95,5 +95,17 @@ namespace Topdev.Bittrex
         /// </summary>
         /// <returns></returns>
         Task<Account> GetAccountAsync();
+
+        /// <summary>
+        /// Get 30 day volume for account.
+        /// </summary>
+        /// <returns></returns>
+        Task<Volume> GetAccountVolumeAsync();
+
+        /// <summary>
+        /// List deposit addresses that have been requested or provisioned.
+        /// </summary>
+        /// <returns></returns>
+        Task<Address[]> GetAddressesAsync();
     }
 }
