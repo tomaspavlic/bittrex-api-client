@@ -107,5 +107,45 @@ namespace Topdev.Bittrex
         /// </summary>
         /// <returns></returns>
         Task<Address[]> GetAddressesAsync();
+
+        /// <summary>
+        /// Request provisioning of a deposit address for a currency for which no address has been requested or provisioned.
+        /// </summary>
+        /// <param name="currencySymbol"></param>
+        /// <returns>Provisioned address</returns>
+        Task<Address> ProvisionNewAddressAsync(string currencySymbol);
+
+        /// <summary>
+        /// Retrieve the status of the deposit address for a particular currency for which one has been requested or provisioned.
+        /// </summary>
+        /// <param name="currencySymbol"></param>
+        /// <returns></returns>
+        Task<Address> GetAddressAsync(string currencySymbol);
+
+        /// <summary>
+        /// List account balances across available currencies. Returns a Balance entry for each currency for which there is either a balance or an address.
+        /// </summary>
+        /// <returns></returns>
+        Task<Balance[]> GetBalancesAsync();
+
+        /// <summary>
+        /// Retrieve account balance for a specific currency. Request will always succeed when the currency exists, regardless of whether there is a balance or address.
+        /// </summary>
+        /// <param name="currencySymbol"></param>
+        /// <returns></returns>
+        Task<Balance> GetBalanceAsync(string currencySymbol);
+
+        /// <summary>
+        /// List currencies.
+        /// </summary>
+        /// <returns></returns>
+        Task<Currency[]> GetCurrenciesAsync();
+
+        /// <summary>
+        /// Retrieve info on a specified currency.
+        /// </summary>
+        /// <param name="symbol"></param>
+        /// <returns></returns>
+        Task<Currency> GetCurrencyAsync(string symbol);
     }
 }
