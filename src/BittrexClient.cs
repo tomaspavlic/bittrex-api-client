@@ -34,24 +34,24 @@ namespace Topdev.Bittrex
         #endregion
 
         #region Markets
-        public Task<Candle[]> GetMarketCandlesAsync(string marketSymbol, CandleInterval interval)
+        public Task<IEnumerable<Candle>> GetMarketCandlesAsync(string marketSymbol, CandleInterval interval)
         {
-            return _restClient.GetResponseAsync<Candle[]>($"markets/{marketSymbol}/candles/{interval}/recent", HttpMethod.Get);
+            return _restClient.GetResponseAsync<IEnumerable<Candle>>($"markets/{marketSymbol}/candles/{interval}/recent", HttpMethod.Get);
         }
 
-        public Task<Candle[]> GetMarketCandlesAsync(string marketSymbol, CandleInterval interval, int year, int month, int day)
+        public Task<IEnumerable<Candle>> GetMarketCandlesAsync(string marketSymbol, CandleInterval interval, int year, int month, int day)
         {
             // construct date from the parameters to validate them
             var date = new DateTime(year, month, day);
 
-            return _restClient.GetResponseAsync<Candle[]>($"markets/{marketSymbol}/candles/{interval}/historical/{year}/{month}/{day}", HttpMethod.Get);
+            return _restClient.GetResponseAsync<IEnumerable<Candle>>($"markets/{marketSymbol}/candles/{interval}/historical/{year}/{month}/{day}", HttpMethod.Get);
         }
 
-        public Task<Market[]> GetMarketsAsync() => _restClient.GetResponseAsync<Market[]>("markets", HttpMethod.Get);
+        public Task<IEnumerable<Market>> GetMarketsAsync() => _restClient.GetResponseAsync<IEnumerable<Market>>("markets", HttpMethod.Get);
 
-        public Task<Summary[]> GetMarketSummariesAsync() => _restClient.GetResponseAsync<Summary[]>("markets/summaries", HttpMethod.Get);
+        public Task<IEnumerable<Summary>> GetMarketSummariesAsync() => _restClient.GetResponseAsync<IEnumerable<Summary>>("markets/summaries", HttpMethod.Get);
 
-        public Task<Ticker[]> GetMarketTickersAsync() => _restClient.GetResponseAsync<Ticker[]>("markets/tickers", HttpMethod.Get);
+        public Task<IEnumerable<Ticker>> GetMarketTickersAsync() => _restClient.GetResponseAsync<IEnumerable<Ticker>>("markets/tickers", HttpMethod.Get);
 
         public Task<Market> GetMarketAsync(string marketSymbol) => _restClient.GetResponseAsync<Market>($"markets/{marketSymbol}", HttpMethod.Get);
 
@@ -59,7 +59,7 @@ namespace Topdev.Bittrex
 
         public Task<OrderBook> GetMarketOrderBookAsync(string marketSymbol) => _restClient.GetResponseAsync<OrderBook>($"markets/{marketSymbol}/orderbook", HttpMethod.Get);
 
-        public Task<Trade[]> GetMarketTradesAsync(string marketSymbol) => _restClient.GetResponseAsync<Trade[]>($"markets/{marketSymbol}/trades", HttpMethod.Get);
+        public Task<IEnumerable<Trade>> GetMarketTradesAsync(string marketSymbol) => _restClient.GetResponseAsync<IEnumerable<Trade>>($"markets/{marketSymbol}/trades", HttpMethod.Get);
 
         public Task<Ticker> GetMarketTickerAsync(string marketSymbol) => _restClient.GetResponseAsync<Ticker>($"markets/{marketSymbol}/ticker", HttpMethod.Get);
         #endregion
@@ -75,9 +75,9 @@ namespace Topdev.Bittrex
 
         #region Addresses
 
-        public Task<Address[]> GetAddressesAsync()
+        public Task<IEnumerable<Address>> GetAddressesAsync()
         {
-            return _restClient.GetResponseAsync<Address[]>("addresses", HttpMethod.Get, true);
+            return _restClient.GetResponseAsync<IEnumerable<Address>>("addresses", HttpMethod.Get, true);
         }
 
         public Task<Address> ProvisionNewAddressAsync(string currencySymbol)
@@ -98,9 +98,9 @@ namespace Topdev.Bittrex
         #endregion
 
         #region Balances
-        public Task<Balance[]> GetBalancesAsync()
+        public Task<IEnumerable<Balance>> GetBalancesAsync()
         {
-            return _restClient.GetResponseAsync<Balance[]>("balances", HttpMethod.Get, true);
+            return _restClient.GetResponseAsync<IEnumerable<Balance>>("balances", HttpMethod.Get, true);
         }
 
         public Task<Balance> GetBalanceAsync(string currencySymbol)
@@ -110,9 +110,9 @@ namespace Topdev.Bittrex
         #endregion
 
         #region Currencies
-        public Task<Currency[]> GetCurrenciesAsync()
+        public Task<IEnumerable<Currency>> GetCurrenciesAsync()
         {
-            return _restClient.GetResponseAsync<Currency[]>("currencies", HttpMethod.Get);
+            return _restClient.GetResponseAsync<IEnumerable<Currency>>("currencies", HttpMethod.Get);
         }
 
         public Task<Currency> GetCurrencyAsync(string symbol)
@@ -135,7 +135,7 @@ namespace Topdev.Bittrex
         public IAsyncEnumerable<ConditionalOrder> GetConditionalOrdersAsync(State state)
         {
             var stateName = Enum.GetName(typeof(State), state).ToLower();
-            return _restClient.GetPagedResponseAsync<ConditionalOrder>($"conditional-orders/{stateName}", HttpMethod.Get, true);
+            return _restClient.GetPagedResponseAsync<ConditionalOrder>($"conditional-orders/{stateName}");
         }
 
         public Task<ConditionalOrder> CreateConditionalOrderAsync(NewConditionalOrder newOrder)
@@ -181,14 +181,14 @@ namespace Topdev.Bittrex
         public IAsyncEnumerable<Order> GetOrdersAsync(State state)
         {
             var stateName = Enum.GetName(typeof(State), state).ToLower();
-            return _restClient.GetPagedResponseAsync<Order>($"orders/{stateName}", HttpMethod.Get, true);
+            return _restClient.GetPagedResponseAsync<Order>($"orders/{stateName}");
         }
         #endregion
 
         #region Subaccounts
         public IAsyncEnumerable<Subaccount> GetSubaccountsAsync()
         {
-            return _restClient.GetPagedResponseAsync<Subaccount>("subaccounts", HttpMethod.Get, true);
+            return _restClient.GetPagedResponseAsync<Subaccount>("subaccounts");
         }
 
         public Task<Subaccount> CreateSubaccountAsync(NewSubaccount newSubaccount)
@@ -205,12 +205,12 @@ namespace Topdev.Bittrex
         #region Transfers
         public IAsyncEnumerable<SentTransferInfo> GetSendTransfersAsync()
         {
-            return _restClient.GetPagedResponseAsync<SentTransferInfo>("transfers/sent", HttpMethod.Get, true);
+            return _restClient.GetPagedResponseAsync<SentTransferInfo>("transfers/sent");
         }
 
         public IAsyncEnumerable<ReceivedTransferInfo> GetReceiveTransfersAsync()
         {
-            return _restClient.GetPagedResponseAsync<ReceivedTransferInfo>("transfers/received", HttpMethod.Get, true);
+            return _restClient.GetPagedResponseAsync<ReceivedTransferInfo>("transfers/received");
         }
 
         public Task<ReceivedTransferInfo> GetReceivedTransferAsync(string transferId)

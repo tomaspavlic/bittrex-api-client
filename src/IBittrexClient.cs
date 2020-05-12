@@ -14,7 +14,7 @@ namespace Topdev.Bittrex
         /// <param name="marketSymbol">symbol of market to retrieve candles for</param>
         /// <param name="interval">desired time interval between candles</param>
         /// <returns></returns>
-        Task<Candle[]> GetMarketCandlesAsync(string marketSymbol, CandleInterval interval);
+        Task<IEnumerable<Candle>> GetMarketCandlesAsync(string marketSymbol, CandleInterval interval);
         
         /// <summary>
         /// Retrieve recent candles for a specific market and candle interval. 
@@ -27,26 +27,26 @@ namespace Topdev.Bittrex
         /// <param name="month">desired month to start from (if applicable)</param>
         /// <param name="day">desired day to start from (if applicable)</param>
         /// <returns></returns>
-        Task<Candle[]> GetMarketCandlesAsync(string marketSymbol, CandleInterval interval, int year, int month, int day);
+        Task<IEnumerable<Candle>> GetMarketCandlesAsync(string marketSymbol, CandleInterval interval, int year, int month, int day);
 
         /// <summary>
         /// List markets.
         /// </summary>
         /// <returns></returns>
-        Task<Market[]> GetMarketsAsync();
+        Task<IEnumerable<Market>> GetMarketsAsync();
 
         /// <summary>
         /// List summaries of the last 24 hours of activity for all markets. 
         /// ** Note: baseVolume is being deprecated and will be removed in favor of quoteVolume
         /// </summary>
         /// <returns></returns>
-        Task<Summary[]> GetMarketSummariesAsync();
+        Task<IEnumerable<Summary>> GetMarketSummariesAsync();
 
         /// <summary>
         /// List tickers for all markets.
         /// </summary>
         /// <returns></returns>
-        Task<Ticker[]> GetMarketTickersAsync();
+        Task<IEnumerable<Ticker>> GetMarketTickersAsync();
 
         /// <summary>
         /// Retrieve information for a specific market.
@@ -74,7 +74,7 @@ namespace Topdev.Bittrex
         /// </summary>
         /// <param name="marketSymbol">symbol of market to retrieve ticker for</param>
         /// <returns></returns>
-        Task<Trade[]> GetMarketTradesAsync(string marketSymbol);
+        Task<IEnumerable<Trade>> GetMarketTradesAsync(string marketSymbol);
 
         /// <summary>
         /// Retrieve the ticker for a specific market.
@@ -108,7 +108,7 @@ namespace Topdev.Bittrex
         /// List deposit addresses that have been requested or provisioned.
         /// </summary>
         /// <returns></returns>
-        Task<Address[]> GetAddressesAsync();
+        Task<IEnumerable<Address>> GetAddressesAsync();
 
         /// <summary>
         /// Request provisioning of a deposit address for a currency for which no address has been requested or provisioned.
@@ -128,7 +128,7 @@ namespace Topdev.Bittrex
         /// List account balances across available currencies. Returns a Balance entry for each currency for which there is either a balance or an address.
         /// </summary>
         /// <returns></returns>
-        Task<Balance[]> GetBalancesAsync();
+        Task<IEnumerable<Balance>> GetBalancesAsync();
 
         /// <summary>
         /// Retrieve account balance for a specific currency. Request will always succeed when the currency exists, regardless of whether there is a balance or address.
@@ -141,7 +141,7 @@ namespace Topdev.Bittrex
         /// List currencies.
         /// </summary>
         /// <returns></returns>
-        Task<Currency[]> GetCurrenciesAsync();
+        Task<IEnumerable<Currency>> GetCurrenciesAsync();
 
         /// <summary>
         /// Retrieve info on a specified currency.

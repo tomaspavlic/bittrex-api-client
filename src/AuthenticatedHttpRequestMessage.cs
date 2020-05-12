@@ -19,6 +19,11 @@ namespace Topdev.Bittrex
             ConstructAuthenticationHeaders();
         }
 
+        /// <summary>
+        /// Get a SHA512 hash of the request contents, Hex-encoded. 
+        /// If there are no request contents, populate this header with a SHA512 hash of an empty string.
+        /// </summary>
+        /// <returns></returns>
         private string GetContentHash()
         {
             var shaM = new SHA512Managed();
@@ -29,6 +34,15 @@ namespace Topdev.Bittrex
             return contentHash;
         }
 
+        /// <summary>
+        /// Create a pre-sign string formed from the following items and concatenating them together
+        /// </summary>
+        /// <param name="timestamp"></param>
+        /// <param name="url"></param>
+        /// <param name="method"></param>
+        /// <param name="contentHash"></param>
+        /// <param name="subaccountId"></param>
+        /// <returns></returns>
         private string GetSignature(string timestamp, string url, string method, string contentHash, string subaccountId = "")
         {
             var sign = string.Join(string.Empty, timestamp, RequestUri.ToString(), "GET", contentHash, subaccountId);
@@ -42,9 +56,21 @@ namespace Topdev.Bittrex
             }
         }
 
+        /// <summary>
+        /// Get the current time as a UNIX timestamp, in epoch-millisecond format.
+        /// </summary>
+        /// <returns></returns>
+        private string GetTimestamp()
+        {
+            return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
+        }
+
+        /// <summary>
+        /// Generate headers for authenticated request.
+        /// </summary>
         private void ConstructAuthenticationHeaders()
         {
-            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
+            var timestamp = GetTimestamp();
             var contentHash = GetContentHash();
             var url = RequestUri.ToString();
             var method = Method.Method;
