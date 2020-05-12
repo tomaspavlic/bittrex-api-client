@@ -10,10 +10,10 @@ namespace Topdev.Bittrex
 
         [JsonPropertyName("total")]
         [JsonConverter(typeof(DoubleConverterWithStringSupport))]
-        public string Total { get; set; }
+        public double Total { get; set; }
 
         [JsonPropertyName("available")]
         [JsonConverter(typeof(DoubleConverterWithStringSupport))]
-        public string Available { get; set; }
+        public double Available { get; set; }
     }
 }
