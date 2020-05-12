@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Topdev.Bittrex
@@ -167,16 +169,152 @@ namespace Topdev.Bittrex
         /// </summary>
         /// <param name="state"></param>
         /// <returns></returns>
-        Task<ConditionalOrder[]> GetConditionalOrdersAsync(OrderState state);
+        IAsyncEnumerable<ConditionalOrder> GetConditionalOrdersAsync(State state);
 
         /// <summary>
         /// Create a new conditional order.
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
-        Task<ConditionalOrder> CreateConditionalOrderAsync(ConditionalOrder order);
+        Task<ConditionalOrder> CreateConditionalOrderAsync(NewConditionalOrder order);
 
+        /// <summary>
+        /// List closed/open orders.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        IAsyncEnumerable<Order> GetOrdersAsync(State state);
 
-        Task<Order[]> GetOrdersAsync(OrderState state);
+        /// <summary>
+        /// Retrieve information on a specific order.
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        Task<Order> GetOrderAsync(string orderId);
+
+        /// <summary>
+        /// Cancel an order.
+        /// </summary>
+        /// <param name="orderId"></param>
+        /// <returns></returns>
+        Task<Order> DeleteOrderAsync(string orderId);
+
+        /// <summary>
+        /// Create a new order.
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        Task<Order> CreateOrderAsync(NewOrder order);
+
+        /// <summary>
+        /// List open deposits. Results are sorted in inverse order of UpdatedAt, and are limited to the first 1000.
+        /// </summary>
+        /// <param name="state">filter by an open deposit status (optional)</param>
+        /// <returns></returns>
+        Task<IEnumerable<Deposit>> GetDepositsAsync(State state);
+
+        /// <summary>
+        /// Retrieve information for a specific deposit.
+        /// </summary>
+        /// <param name="depositId"></param>
+        /// <returns></returns>
+        Task<Deposit> GetDepositAsync(string depositId);
+
+        /// <summary>
+        /// Retrieves all deposits for this account with the given TxId
+        /// </summary>
+        /// <param name="txId"></param>
+        /// <returns></returns>
+        Task<Deposit> GetDepositByTxIdAsync(string txId);
+
+        /// <summary>
+        /// List subaccounts. 
+        /// (NOTE: This API is limited to partners and not available for traders.)
+        /// </summary>
+        /// <returns></returns>
+        IAsyncEnumerable<Subaccount> GetSubaccountsAsync();
+
+        /// <summary>
+        /// Create a new subaccount. 
+        /// (NOTE: This API is limited to partners and not available for traders.)
+        /// </summary>
+        /// <param name="newSubaccount"></param>
+        /// <returns></returns>
+        Task<Subaccount> CreateSubaccountAsync(NewSubaccount newSubaccount);
+
+        /// <summary>
+        /// Retrieve details for a specified subaccount. 
+        /// (NOTE: This API is limited to partners and not available for traders.)
+        /// </summary>
+        /// <param name="subAccountId"></param>
+        /// <returns></returns>
+        Task<Subaccount> GetSubaccountAsync(string subAccountId);
+
+        /// <summary>
+        /// List sent transfers.
+        /// (NOTE: This API is limited to partners and not available for traders.) 
+        /// </summary>
+        /// <returns></returns>
+        IAsyncEnumerable<SentTransferInfo> GetSendTransfersAsync();
+
+        /// <summary>
+        /// List received transfers.
+        /// (NOTE: This API is limited to partners and not available for traders.) 
+        /// </summary>
+        /// <returns></returns>
+        IAsyncEnumerable<ReceivedTransferInfo> GetReceiveTransfersAsync();
+
+        /// <summary>
+        /// Retrieve information on the specified transfer.
+        /// (NOTE: This API is limited to partners and not available for traders.)
+        /// </summary>
+        /// <param name="transferId"></param>
+        /// <returns></returns>
+        Task<ReceivedTransferInfo> GetReceivedTransferAsync(string transferId);
+
+        /// <summary>
+        /// Executes a new transfer.
+        /// (NOTE: This API is limited to partners and not available for traders.)
+        /// </summary>
+        /// <param name="newTransfer"></param>
+        /// <returns></returns>
+        Task<NewTransfer> CreateTransferAsync(NewTransfer newTransfer);
+
+        /// <summary>
+        /// List open withdrawals. Results are sorted in inverse order of the CreatedAt field, and are limited to the first 1000.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="currencySymbol"></param>
+        /// <returns></returns>
+        Task<IEnumerable<Withdrawal>> GetWithdrawalsAsync(State state, string currencySymbol);
+
+        /// <summary>
+        /// Retrieves all withdrawals for this account with the given TxId
+        /// </summary>
+        /// <param name="txId"></param>
+        /// <returns></returns>
+        Task<Withdrawal> GetWithdrawalByTxIdAsync(string txId);
+
+        /// <summary>
+        /// Retrieve information on a specified withdrawal.
+        /// </summary>
+        /// <param name="withdrawalId"></param>
+        /// <returns></returns>
+        Task<Withdrawal> GetWithdrawalAsync(string withdrawalId);
+
+        /// <summary>
+        /// Cancel a withdrawal. 
+        /// (Withdrawals can only be cancelled if status is REQUESTED, AUTHORIZED, or ERROR_INVALID_ADDRESS.)
+        /// </summary>
+        /// <param name="withdrawalId"></param>
+        /// <returns></returns>
+        Task DeleteWithdrawalAsync(string withdrawalId);
+
+        /// <summary>
+        /// Create a new withdrawal.
+        /// </summary>
+        /// <param name="newWithdrawal"></param>
+        /// <returns></returns>
+        Task<Withdrawal> CreateWithdrawalAsync(NewWithdrawal newWithdrawal);
     }
 }

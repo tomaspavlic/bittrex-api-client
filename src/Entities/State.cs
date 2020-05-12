@@ -1,6 +1,6 @@
 namespace Topdev.Bittrex
 {
-    public enum OrderState
+    public enum State
     {
         Closed,
         Open

@@ -1,37 +1,42 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Topdev.Bittrex
 {
     public class BittrexClient : IBittrexClient, IDisposable
     {
-        private static readonly string _baseApiUrl = "https://api.bittrex.com/v3";
-
-        private static HttpClient _httpClient = new HttpClient();
-        private static string _key;
-        private static string _secret;
+        private readonly BittrexRestClient _restClient;
 
         public BittrexClient(string key, string secret)
         {
-            _key = key;
-            _secret = secret;
+            _restClient = new BittrexRestClient(key, secret);
         }
 
-        public BittrexClient()
+        public BittrexClient() : this(null, null)
         {
-
+            
         }
 
+        #region Accounts
 
+        public Task<Account> GetAccountAsync()
+        {
+            return _restClient.GetResponseAsync<Account>("account", HttpMethod.Get, true);
+        }
+
+        public Task<Volume> GetAccountVolumeAsync()
+        {
+            return _restClient.GetResponseAsync<Volume>("account/volume", HttpMethod.Get, true);
+        }
+
+        #endregion
+
+        #region Markets
         public Task<Candle[]> GetMarketCandlesAsync(string marketSymbol, CandleInterval interval)
         {
-            return GetResponseAsync<Candle[]>($"markets/{marketSymbol}/candles/{interval}/recent", HttpMethod.Get);
+            return _restClient.GetResponseAsync<Candle[]>($"markets/{marketSymbol}/candles/{interval}/recent", HttpMethod.Get);
         }
 
         public Task<Candle[]> GetMarketCandlesAsync(string marketSymbol, CandleInterval interval, int year, int month, int day)
@@ -39,45 +44,40 @@ namespace Topdev.Bittrex
             // construct date from the parameters to validate them
             var date = new DateTime(year, month, day);
 
-            return GetResponseAsync<Candle[]>($"markets/{marketSymbol}/candles/{interval}/historical/{year}/{month}/{day}", HttpMethod.Get);
+            return _restClient.GetResponseAsync<Candle[]>($"markets/{marketSymbol}/candles/{interval}/historical/{year}/{month}/{day}", HttpMethod.Get);
         }
 
-        public Task<Market[]> GetMarketsAsync() => GetResponseAsync<Market[]>("markets", HttpMethod.Get);
+        public Task<Market[]> GetMarketsAsync() => _restClient.GetResponseAsync<Market[]>("markets", HttpMethod.Get);
 
-        public Task<Summary[]> GetMarketSummariesAsync() => GetResponseAsync<Summary[]>("markets/summaries", HttpMethod.Get);
+        public Task<Summary[]> GetMarketSummariesAsync() => _restClient.GetResponseAsync<Summary[]>("markets/summaries", HttpMethod.Get);
 
-        public Task<Ticker[]> GetMarketTickersAsync() => GetResponseAsync<Ticker[]>("markets/tickers", HttpMethod.Get);
+        public Task<Ticker[]> GetMarketTickersAsync() => _restClient.GetResponseAsync<Ticker[]>("markets/tickers", HttpMethod.Get);
 
-        public Task<Market> GetMarketAsync(string marketSymbol) => GetResponseAsync<Market>($"markets/{marketSymbol}", HttpMethod.Get);
+        public Task<Market> GetMarketAsync(string marketSymbol) => _restClient.GetResponseAsync<Market>($"markets/{marketSymbol}", HttpMethod.Get);
 
-        public Task<Summary> GetMarketSummaryAsync(string marketSymbol) => GetResponseAsync<Summary>($"markets/{marketSymbol}/summary", HttpMethod.Get);
+        public Task<Summary> GetMarketSummaryAsync(string marketSymbol) => _restClient.GetResponseAsync<Summary>($"markets/{marketSymbol}/summary", HttpMethod.Get);
 
-        public Task<OrderBook> GetMarketOrderBookAsync(string marketSymbol) => GetResponseAsync<OrderBook>($"markets/{marketSymbol}/orderbook", HttpMethod.Get);
+        public Task<OrderBook> GetMarketOrderBookAsync(string marketSymbol) => _restClient.GetResponseAsync<OrderBook>($"markets/{marketSymbol}/orderbook", HttpMethod.Get);
 
-        public Task<Trade[]> GetMarketTradesAsync(string marketSymbol) => GetResponseAsync<Trade[]>($"markets/{marketSymbol}/trades", HttpMethod.Get);
+        public Task<Trade[]> GetMarketTradesAsync(string marketSymbol) => _restClient.GetResponseAsync<Trade[]>($"markets/{marketSymbol}/trades", HttpMethod.Get);
 
-        public Task<Ticker> GetMarketTickerAsync(string marketSymbol) => GetResponseAsync<Ticker>($"markets/{marketSymbol}/ticker", HttpMethod.Get);
+        public Task<Ticker> GetMarketTickerAsync(string marketSymbol) => _restClient.GetResponseAsync<Ticker>($"markets/{marketSymbol}/ticker", HttpMethod.Get);
+        #endregion
 
+        #region Ping
         public async Task<long> PingAsync()
         {
-            var pong = await GetResponseAsync<Pong>("ping", HttpMethod.Get);
+            var pong = await _restClient.GetResponseAsync<Pong>("ping", HttpMethod.Get);
 
             return pong.ServerTime;
         }
+        #endregion
 
-        public Task<Account> GetAccountAsync()
-        {
-            return GetResponseAsync<Account>("account", HttpMethod.Get, true);
-        }
-
-        public Task<Volume> GetAccountVolumeAsync()
-        {
-            return GetResponseAsync<Volume>("account/volume", HttpMethod.Get, true);
-        }
+        #region Addresses
 
         public Task<Address[]> GetAddressesAsync()
         {
-            return GetResponseAsync<Address[]>("addresses", HttpMethod.Get, true);
+            return _restClient.GetResponseAsync<Address[]>("addresses", HttpMethod.Get, true);
         }
 
         public Task<Address> ProvisionNewAddressAsync(string currencySymbol)
@@ -87,114 +87,175 @@ namespace Topdev.Bittrex
                 CurrencySymbol = currencySymbol
             };
 
-            return GetResponseAsync<Address>("addresses", HttpMethod.Post, true, newAddress);
+            return _restClient.GetResponseAsync<Address>("addresses", HttpMethod.Post, true, newAddress);
         }
 
         public Task<Address> GetAddressAsync(string currencySymbol)
         {
-            return GetResponseAsync<Address>($"addresses/{currencySymbol}", HttpMethod.Get);
+            return _restClient.GetResponseAsync<Address>($"addresses/{currencySymbol}", HttpMethod.Get);
         }
 
+        #endregion
+
+        #region Balances
         public Task<Balance[]> GetBalancesAsync()
         {
-            return GetResponseAsync<Balance[]>("balances", HttpMethod.Get, true);
+            return _restClient.GetResponseAsync<Balance[]>("balances", HttpMethod.Get, true);
         }
 
         public Task<Balance> GetBalanceAsync(string currencySymbol)
         {
-            return GetResponseAsync<Balance>($"balances/{currencySymbol}", HttpMethod.Get, true);
+            return _restClient.GetResponseAsync<Balance>($"balances/{currencySymbol}", HttpMethod.Get, true);
         }
+        #endregion
 
+        #region Currencies
         public Task<Currency[]> GetCurrenciesAsync()
         {
-            return GetResponseAsync<Currency[]>("currencies", HttpMethod.Get);
+            return _restClient.GetResponseAsync<Currency[]>("currencies", HttpMethod.Get);
         }
 
         public Task<Currency> GetCurrencyAsync(string symbol)
         {
-            return GetResponseAsync<Currency>($"currencies/{symbol}", HttpMethod.Get);
+            return _restClient.GetResponseAsync<Currency>($"currencies/{symbol}", HttpMethod.Get);
         }
+        #endregion
 
-        private async Task<T> GetResponseAsync<T>(HttpRequestMessage message)
-        {
-            var result = await _httpClient.SendAsync(message);
-            var resultStream = await result.Content.ReadAsStreamAsync();
-
-            if (result.IsSuccessStatusCode)
-            {
-                var resultObject = await JsonSerializer.DeserializeAsync<T>(resultStream);
-                return resultObject;
-            }
-            else
-            {
-                var error = await JsonSerializer.DeserializeAsync<Error>(resultStream);
-                throw new BittrexApiException(error);
-            }
-        }
-
-        private async Task<T[]> GetPagedResponseAsync<T>(string path, HttpMethod method, bool authentication = false, object content = null)
-        {
-            var list = new List<T>();
-            var response = await GetResponseAsync<T[]>(path, method, authentication, content);
-            var nextPageTokenProperty = typeof(T).GetProperties().FirstOrDefault(x => x.GetCustomAttributes(true).Any(c => c is PageTokenAttribute));
-            list.AddRange(response);
-
-            while (response.Length > 0)
-            {
-                T lastElement = response[^1];
-                var nextPageToken = nextPageTokenProperty.GetValue(lastElement);
-
-                var url = $"{path}?nextPageToken={nextPageToken}";
-                response = await GetResponseAsync<T[]>(url, method, authentication, content);
-                list.AddRange(response);
-            }
-
-            return list.ToArray();
-        }
-
-        private Task<T> GetResponseAsync<T>(string path, HttpMethod method, bool authentication = false, object content = null)
-        {
-            var url = $"{_baseApiUrl}/{path}";
-            var request = (authentication) ? new AuthenticatedHttpRequestMessage(method, url, _key, _secret) : new HttpRequestMessage(method, url);
-
-            if (content != null)
-            {
-                request.Content = new StringContent(JsonSerializer.Serialize(content));
-            }
-
-            return GetResponseAsync<T>(request);
-        }
-
-        public void Dispose()
-        {
-            _httpClient.Dispose();
-        }
-
+        #region ConditionalOrders
         public Task<ConditionalOrder> GetConditionalOrderAsync(string orderId)
         {
-            throw new NotImplementedException();
+            return _restClient.GetResponseAsync<ConditionalOrder>($"conditional-orders/{orderId}", HttpMethod.Get, true);
         }
 
         public Task DeleteConditionalOrderAsync(string orderId)
         {
+            return _restClient.GetResponseAsync<ConditionalOrder>($"conditional-orders/{orderId}", HttpMethod.Delete, true);
+        }
+
+        public IAsyncEnumerable<ConditionalOrder> GetConditionalOrdersAsync(State state)
+        {
+            var stateName = Enum.GetName(typeof(State), state).ToLower();
+            return _restClient.GetPagedResponseAsync<ConditionalOrder>($"conditional-orders/{stateName}", HttpMethod.Get, true);
+        }
+
+        public Task<ConditionalOrder> CreateConditionalOrderAsync(NewConditionalOrder newOrder)
+        {
+            return _restClient.GetResponseAsync<ConditionalOrder>("conditional-orders", HttpMethod.Post, true, newOrder);
+        }
+        #endregion
+
+        #region Deposits
+        public Task<IEnumerable<Deposit>> GetDepositsAsync(State state)
+        {
+            var stateName = Enum.GetName(typeof(State), state).ToLower();
+            return _restClient.GetResponseAsync<IEnumerable<Deposit>>($"deposits/{stateName}", HttpMethod.Get, true);
+        }
+
+        public Task<Deposit> GetDepositAsync(string depositId)
+        {
+            return _restClient.GetResponseAsync<Deposit>($"deposits/{depositId}", HttpMethod.Get, true);
+        }
+
+        public Task<Deposit> GetDepositByTxIdAsync(string txId)
+        {
+            return _restClient.GetResponseAsync<Deposit>($"deposits/ByTxId/{txId}", HttpMethod.Get, true);
+        }
+        #endregion
+
+        #region Orders
+        public Task<Order> GetOrderAsync(string orderId)
+        {
+            return _restClient.GetResponseAsync<Order>($"orders/{orderId}", HttpMethod.Get, true);
+        }
+
+        public Task<Order> DeleteOrderAsync(string orderId)
+        {
+            return _restClient.GetResponseAsync<Order>($"orders/{orderId}", HttpMethod.Delete, true);
+        }
+
+        public Task<Order> CreateOrderAsync(NewOrder newOrder)
+        {
+            return _restClient.GetResponseAsync<Order>($"orders", HttpMethod.Post, true, newOrder);
+        }
+
+        public IAsyncEnumerable<Order> GetOrdersAsync(State state)
+        {
+            var stateName = Enum.GetName(typeof(State), state).ToLower();
+            return _restClient.GetPagedResponseAsync<Order>($"orders/{stateName}", HttpMethod.Get, true);
+        }
+        #endregion
+
+        #region Subaccounts
+        public IAsyncEnumerable<Subaccount> GetSubaccountsAsync()
+        {
+            return _restClient.GetPagedResponseAsync<Subaccount>("subaccounts", HttpMethod.Get, true);
+        }
+
+        public Task<Subaccount> CreateSubaccountAsync(NewSubaccount newSubaccount)
+        {
+            return _restClient.GetResponseAsync<Subaccount>("subaccounts", HttpMethod.Get, true, newSubaccount);
+        }
+
+        public Task<Subaccount> GetSubaccountAsync(string subAccountId)
+        {
+            return _restClient.GetResponseAsync<Subaccount>($"subaccounts/{subAccountId}", HttpMethod.Get, true);
+        }
+        #endregion
+
+        #region Transfers
+        public IAsyncEnumerable<SentTransferInfo> GetSendTransfersAsync()
+        {
+            return _restClient.GetPagedResponseAsync<SentTransferInfo>("transfers/sent", HttpMethod.Get, true);
+        }
+
+        public IAsyncEnumerable<ReceivedTransferInfo> GetReceiveTransfersAsync()
+        {
+            return _restClient.GetPagedResponseAsync<ReceivedTransferInfo>("transfers/received", HttpMethod.Get, true);
+        }
+
+        public Task<ReceivedTransferInfo> GetReceivedTransferAsync(string transferId)
+        {
+            return _restClient.GetResponseAsync<ReceivedTransferInfo>($"transfers/{transferId}", HttpMethod.Get, true);
+        }
+
+        public Task<NewTransfer> CreateTransferAsync(NewTransfer newTransfer)
+        {
+            return _restClient.GetResponseAsync<NewTransfer>("transfers", HttpMethod.Post, true, newTransfer);
+        }
+        #endregion
+
+        #region Withdrawals
+        public Task<IEnumerable<Withdrawal>> GetWithdrawalsAsync(State state, string currencySymbol)
+        {
+            var stateName = Enum.GetName(typeof(State), state).ToLower();
+            return _restClient.GetResponseAsync<IEnumerable<Withdrawal>>($"withdrawals/{stateName}", HttpMethod.Get, true);
+        }
+
+        public Task<Withdrawal> GetWithdrawalByTxIdAsync(string txId)
+        {
+            return _restClient.GetResponseAsync<Withdrawal>($"withdrawals/ByTxId/{txId}", HttpMethod.Get, true);
+        }
+
+        public Task<Withdrawal> GetWithdrawalAsync(string withdrawalId)
+        {
+            return _restClient.GetResponseAsync<Withdrawal>($"withdrawals/{withdrawalId}", HttpMethod.Get, true);
+        }
+
+        public Task DeleteWithdrawalAsync(string withdrawalId)
+        {
             throw new NotImplementedException();
+            // return _restClient.GetResponseAsync<Withdrawal>($"withdrawals/{withdrawalId}", HttpMethod.Get, true);
         }
 
-        public Task<ConditionalOrder[]> GetConditionalOrdersAsync(OrderState state)
+        public Task<Withdrawal> CreateWithdrawalAsync(NewWithdrawal newWithdrawal)
         {
-            var stateName = Enum.GetName(typeof(OrderState), state).ToLower();
-            return GetPagedResponseAsync<ConditionalOrder>($"conditional-orders/{stateName}", HttpMethod.Get, true);
+            return _restClient.GetResponseAsync<Withdrawal>($"withdrawals", HttpMethod.Post, true, newWithdrawal);
         }
-
-        public Task<ConditionalOrder> CreateConditionalOrderAsync(ConditionalOrder order)
+        #endregion
+    
+        public void Dispose()
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<Order[]> GetOrdersAsync(OrderState state)
-        {
-            var stateName = Enum.GetName(typeof(OrderState), state).ToLower();
-            return GetPagedResponseAsync<Order>($"orders/{stateName}", HttpMethod.Get, true);
+            _restClient.Dispose();
         }
     }
 }

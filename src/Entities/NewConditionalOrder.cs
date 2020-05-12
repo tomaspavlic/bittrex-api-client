@@ -1,15 +1,9 @@
-
-using System;
 using System.Text.Json.Serialization;
 
 namespace Topdev.Bittrex
 {
-    public class ConditionalOrder
+    public class NewConditionalOrder
     {
-        [PageToken]
-        [JsonPropertyName("id")]
-        public string Id { get; set; }
-
         [JsonPropertyName("marketSymbol")]
         public string MarketSymbol { get; set; }
 
@@ -24,9 +18,6 @@ namespace Topdev.Bittrex
         [JsonConverter(typeof(DoubleConverterWithStringSupport))]
         public double TrailingStopPercent { get; set; }
 
-        [JsonPropertyName("createdOrderId")]
-        public string CreatedOrderId { get; set; }
-
         [JsonPropertyName("orderToCreate")]
         public OrderToCreate OrderToCreate { get; set; }
 
@@ -35,20 +26,5 @@ namespace Topdev.Bittrex
 
         [JsonPropertyName("clientConditionalOrderId")]
         public string ClientConditionalOrderId { get; set; }
-
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
-
-        [JsonPropertyName("orderCreationErrorCode")]
-        public string OrderCreationErrorCode { get; set; }
-
-        [JsonPropertyName("createdAt")]
-        public DateTimeOffset CreatedAt { get; set; }
-
-        [JsonPropertyName("updatedAt")]
-        public DateTimeOffset UpdatedAt { get; set; }
-
-        [JsonPropertyName("closedAt")]
-        public DateTimeOffset ClosedAt { get; set; }
     }
 }
