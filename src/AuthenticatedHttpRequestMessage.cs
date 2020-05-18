@@ -45,7 +45,7 @@ namespace Topdev.Bittrex
         /// <returns></returns>
         private string GetSignature(string timestamp, string url, string method, string contentHash, string subaccountId = "")
         {
-            var sign = string.Join(string.Empty, timestamp, RequestUri.ToString(), "GET", contentHash, subaccountId);
+            var sign = string.Join(string.Empty, timestamp, RequestUri.ToString(), method, contentHash, subaccountId);
             var secret = Encoding.UTF8.GetBytes(_secret);
 
             using (HMACSHA512 hmac = new HMACSHA512(secret))
