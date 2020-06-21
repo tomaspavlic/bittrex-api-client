@@ -28,10 +28,6 @@ namespace Topdev.Bittrex
         [JsonConverter(typeof(DoubleConverterWithStringSupport))]
         public double Volume { get; set; }
 
-        [JsonPropertyName("baseVolume")]
-        [JsonConverter(typeof(DoubleConverterWithStringSupport))]
-        public double BaseVolume { get; set; }
-
         [JsonPropertyName("quoteVolume")]
         [JsonConverter(typeof(DoubleConverterWithStringSupport))]
         public double QuoteVolume { get; set; }
