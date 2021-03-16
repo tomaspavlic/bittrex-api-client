@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <PackageId>Topdev.Bittrex.Client</PackageId>
-    <Version>1.0.15</Version>
+    <Version>1.0.16</Version>
     <Authors>Tomáš Pavlič</Authors>
     <Company>Topdev</Company>
     <IsPackable>true</IsPackable>
@@ -11,6 +11,7 @@
     <RepositoryUrl>https://github.com/tomaspavlic/bittrex-api-client</RepositoryUrl>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>
